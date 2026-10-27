@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <!-- 모바일 기기 화면 비율 및 반응형 뷰포트 설정 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANDERLUST | 설레는 감성 여행의 시작</title>
+
+    <!-- 구글 웹폰트 불러오기 (Montserrat 및 Pretendard 느낌의 Noto Sans KR) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- 감각적인 아이콘 사용을 위한 Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           [1. CSS 기본 초기화 및 디자인 테마 변수 설정]
+           - 웹사이트 전반에 사용될 색상 팔레트와 폰트, 여백을 변수로 지정합니다.
+           ========================================================================== */
+        :root {
+            /* 메인 테마 색상 (다크 모드 기반의 네온 & 오로라 그라디언트) */
+            --bg-color: #0b0f19;          /* 깊고 신비로운 밤하늘 배경색 */
+            --bg-card: rgba(22, 27, 46, 0.7); /* 반투명한 글래스모피즘 카드 배경 */
+            --primary: #6366f1;          /* 감각적인 인디고 포인트 컬러 */
+            --primary-glow: #818cf8;     /* 인디고 빛 발광 색상 */
+            --secondary: #06b6d4;        /* 청량한 사이언(청록) 컬러 */
+            --accent: #ec4899;           /* 화려한 핑크 악센트 컬러 */
+            --text-main: #ffffff;        /* 주요 텍스트 색상 (흰색) */
+            --text-sub: #94a3b8;         /* 보조 설명 텍스트 색상 (은은한 회색) */
+            --border-glass: rgba(255, 255, 255, 0.12); /* 글래스 테두리 반투명 선 */
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* 부드러운 애니메이션 곡선 */
+        }
+
+        /* 전체 요소 여백 초기화 및 박스 사이징 통일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth; /* 링크 클릭 시 부드럽게 스크롤 이동 */
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+            word-break: keep-all; /* 한글 단어 단위 개행 */
+        }
+
+        /* 링크 태그 기본 밑줄 제거 */
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 리스트 기본 불릿 기호 제거 */
+        ul {
+            list-style: none;
+        }
+
+        /* ==========================================================================
+           [2. 배경 앰비언트 조명 효과 (Aurora Glows)]
+           - 화면 배경에 몽환적인 그라디언트 빛을 배치하여 트렌디한 느낌을 줍니다.
+           ========================================================================== */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary), transparent);
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent), transparent);
+            top: 40%;
+            right: -150px;
+        }
+
+        .glow-3 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, var(--secondary), transparent);
+            bottom: -100px;
+            left: 20%;
+        }
+
+        /* ==========================================================================
+           [3. 상단 헤더 & 네비게이션 바 (Navigation Bar)]
+           - 상단에 고정되며 스크롤 시 반투명 글래스 블러 효과가 적용됩니다.
+           ========================================================================== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+        }
+
+        /* 스크롤이 내려갔을 때 자바스크립트로 활성화될 클래스 */
+        header.scrolled {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            height: 68px;
+        }
+
+        /* 브랜드 로고 */
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            -webkit-text-fill-color: initial;
+        }
+
+        /* 데스크톱 네비게이션 메뉴 */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        /* 메뉴 호버 시 하단 라인 애니메이션 */
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: var(--transition-smooth);
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 우측 상단 문의/예약 버튼 */
+        .header-cta-btn {
+            padding: 9px 22px;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: #ffffff;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+            transition: var(--transition-smooth);
+        }
+
+        .header-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        /* 모바일 햄버거 메뉴 버튼 (PC에서는 숨김) */
+        .mobile-toggle-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           [4. 메인 히어로 섹션 (Hero Section) & 비디오 숏폼]
+           - 중앙에 여행숏폼202.mp4 영상을 반응형으로 세련되게 배치합니다.
+           ========================================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* 감성적인 상단 뱃지 */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--secondary);
+            backdrop-filter: blur(8px);
+            margin-bottom: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-badge i {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 메인 타이틀 */
+        .hero-title {
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
+        }
+
+        /* 그라디언트 텍스트 효과 */
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 20%, var(--secondary) 60%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 서브 설명글 */
+        .hero-description {
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
+            color: var(--text-sub);
+            max-width: 680px;
+            margin: 0 auto 36px;
+            font-weight: 300;
+        }
+
+        /* -------------------------------------------------------------
+           [중요!] 메인 화면 중앙 숏폼 비디오 컨테이너 스타일링
+           - 모바일 화면에서도 비율(aspect-ratio: 9/16)이 깨지지 않고
+           - 스마트폰 디바이스 프레임처럼 우아한 외곽선과 입체 그림자 적용
+           ------------------------------------------------------------- */
+        .video-showcase-wrapper {
+            position: relative;
+            margin: 15px auto 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 영상 주변으로 은은하게 퍼지는 앰비언트 글로우 백라이트 */
+        .video-glow-effect {
+            position: absolute;
+            width: 320px;
+            height: 480px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(236, 72, 153, 0.4));
+            border-radius: 40px;
+            filter: blur(45px);
+            z-index: 1;
+            opacity: 0.7;
+            animation: floatGlow 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: scale(0.95) translateY(0px); opacity: 0.5; }
+            100% { transform: scale(1.05) translateY(-10px); opacity: 0.85; }
+        }
+
+        /* 스마트폰/숏폼 프레임 컨테이너 */
+        .video-card {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 340px; /* 숏폼 영상에 가장 알맞은 최적 폭 */
+            background: rgba(18, 23, 38, 0.85);
+            padding: 10px;
+            border-radius: 36px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 35px 70px rgba(99, 102, 241, 0.25),
+                        0 20px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 스마트폰 상단 스피커 홀/노치 느낌의 감성 데코레이션 */
+        .phone-notch {
+            width: 70px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            margin: 6px auto 10px;
+        }
+
+        /* 숏폼 비디오 본체 스타일 */
+        .shortform-video {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 9 / 16; /* 숏폼 표준 9:16 황금비율 고정 */
+            object-fit: cover;    /* 비율 깨짐이나 왜곡 없이 가득 채움 */
+            border-radius: 26px;
+            display: block;
+            background-color: #000000;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* 비디오 상단에 띄우는 감성 태그 오버레이 */
+        .video-floating-badge {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #ffffff;
+            pointer-events: none;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        /* 메인 버튼 그룹 */
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            z-index: 5;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 34px;
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+            background: linear-gradient(135deg, #7c3aed, var(--primary));
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border-radius: 50px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* ==========================================================================
+           [5. 섹션 공통 스타일 & 스크롤 애니메이션 클래스]
+           - 부드러운 스크롤 페이드 인 효과를 지원하는 핵심 스타일
+           ========================================================================== */
+        section {
+            padding: 100px 7%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        /* [핵심] 스크롤 시 부드럽게 나타나는 Reveal 애니메이션 클래스 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(45px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: opacity, transform;
+        }
+
+        /* 화면에 진입하면 자바스크립트에 의해 추가되는 클래스 */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 딜레이 순차 효과 (여러 카드가 나란히 뜰 때 시차 적용) */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        /* ==========================================================================
+           [6. 추천 여행지 그리드 섹션 (Destinations)]
+           - 고화질 감성 카드와 호버 시 마이크로 인터랙션
+           ========================================================================== */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .destination-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: var(--transition-smooth);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+                        0 0 25px rgba(99, 102, 241, 0.2);
+        }
+
+        .card-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .card-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .destination-card:hover .card-image-wrap img {
+            transform: scale(1.1);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(11, 15, 25, 0.75);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .card-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-location {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .card-desc {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 16px;
+        }
+
+        .card-price {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+        }
+
+        .card-price strong {
+            font-size: 1.25rem;
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .card-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--border-glass);
+        }
+
+        .destination-card:hover .card-btn {
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: rotate(45deg);
+        }
+
+        /* ==========================================================================
+           [7. 여행 테마 & 장점 소개 섹션 (Features)]
+           ========================================================================== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 38px 28px;
+            text-align: left;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: rgba(22, 27, 46, 0.8);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: rgba(99, 102, 241, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--secondary);
+            margin-bottom: 24px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ==========================================================================
+           [8. 여행 프로모션 배너 (Call To Action)]
+           ========================================================================== */
+        .cta-section {
+            padding: 60px 7% 100px;
+        }
+
+        .cta-banner {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 32px;
+            padding: 70px 40px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-banner h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        .cta-banner p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            max-width: 620px;
+            margin: 0 auto 36px;
+        }
+
+        /* ==========================================================================
+           [9. 푸터 영역 (Footer)]
+           ========================================================================== */
+        footer {
+            background: #070a11;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 60px 7% 35px;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-socials a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sub);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--border-glass);
+        }
+
+        .footer-socials a:hover {
+            color: #ffffff;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 25px auto 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* ==========================================================================
+           [10. 모바일 및 태블릿 완벽 반응형 미디어 쿼리 (Media Queries)]
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 76px;
+                left: 0;
+                width: 100%;
+                background: rgba(11, 15, 25, 0.96);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 35px 0;
+                gap: 1.8rem;
+                transform: translateY(-150%);
+                transition: var(--transition-smooth);
+                border-bottom: 1px solid var(--border-glass);
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .mobile-toggle-btn {
+                display: block;
+            }
+
+            .header-cta-btn {
+                display: none; /* 모바일 헤더 단순화 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 70px 5%;
+            }
+
+            .hero {
+                padding-top: 100px;
+            }
+
+            .video-card {
+                max-width: 300px; /* 모바일 화면에 맞춘 적정 폭 축소 */
+                border-radius: 28px;
+            }
+
+            .video-glow-effect {
+                width: 260px;
+                height: 400px;
+            }
+
+            .cta-banner {
+                padding: 45px 20px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-card {
+                max-width: 270px; /* 초소형 모바일 기기 완벽 대응 */
+                padding: 8px;
+                border-radius: 24px;
+            }
+
+            .shortform-video {
+                border-radius: 20px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 배경 은은한 앰비언트 오로라 빛 (동적 분위기 연출) -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- ==========================================================================
+       [상단 네비게이션 헤더 영역]
+       ========================================================================== -->
+    <header id="mainHeader">
+        <a href="#" class="logo">
+            <i class="fa-solid fa-compass"></i>
+            WANDERLUST
+        </a>
+
+        <!-- 네비게이션 메뉴 목록 -->
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">홈</a></li>
+            <li><a href="#destinations">인기 여행지</a></li>
+            <li><a href="#features">여행 테마</a></li>
+            <li><a href="#reviews">여행자 스토리</a></li>
+        </ul>
+
+        <!-- 문의 버튼 (데스크톱 전용) -->
+        <a href="#contact" class="header-cta-btn">맞춤 여행 설계</a>
+
+        <!-- 모바일 햄버거 토글 버튼 -->
+        <button class="mobile-toggle-btn" id="mobileMenuBtn" aria-label="메뉴 열기">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- ==========================================================================
+       [메인 히어로 섹션 - 여행숏폼202.mp4 중앙 반응형 배치]
+       ========================================================================== -->
+    <main id="home" class="hero">
+        <!-- 감성 뱃지 -->
+        <div class="hero-badge reveal">
+            <i class="fa-solid fa-sparkles"></i> 2026 트렌디 트래블 셀렉션
+        </div>
+
+        <!-- 메인 헤드라인 타이틀 -->
+        <h1 class="hero-title reveal delay-1">
+            일상의 숨을 고르고,<br>
+            <span class="gradient-text">세상의 설렘</span> 속으로
+        </h1>
+
+        <!-- 감성 서브 설명글 -->
+        <p class="hero-description reveal delay-2">
+            숨겨진 비경과 감각적인 힐링의 순간을 당신의 손안에 전해드립니다.<br>
+            영상 속 환상적인 여행지들로 지금 바로 떠나보세요.
+        </p>
+
+        <!-- -------------------------------------------------------------
+           [핵심 구현] 중앙 숏폼 비디오 쇼케이스 영역
+           - 요청 파일: 여행숏폼202.mp4
+           - 자동재생(autoplay), 반복재생(loop), 음소거(muted) 적용
+           - 모바일 인라인 재생(playsinline) 및 비율 깨짐 방지 스타일링 완비
+           ------------------------------------------------------------- -->
+        <div class="video-showcase-wrapper reveal delay-3">
+            <!-- 비디오 뒷배경 네온 발광 조명 -->
+            <div class="video-glow-effect"></div>
+
+            <!-- 스마트폰 숏폼 스타일 프레임 카드 -->
+            <div class="video-card">
+                <!-- 스마트폰 상단 스피커 홀 장식 -->
+                <div class="phone-notch"></div>
+
+                <!-- 비디오 태그: 모바일 자동재생 및 숏폼 9:16 비율 최적화 -->
+                <video 
+                    class="shortform-video"
+                    src="여행숏폼202.mp4" 
+                    autoplay 
+                    loop 
+                    muted 
+                    playsinline
+                    preload="auto"
+                >
+                    <p>사용하시는 브라우저가 동영상 재생을 지원하지 않습니다.</p>
+                </video>
+
+                <!-- 비디오 위 떠있는 감성 실시간 뱃지 -->
+                <div class="video-floating-badge">
+                    <span class="live-dot"></span>
+                    <span>인기 숏폼 하이라이트</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 액션 버튼 그룹 -->
+        <div class="hero-actions reveal delay-4">
+            <a href="#destinations" class="btn-primary">
+                <i class="fa-solid fa-paper-plane"></i> 추천 여행지 둘러보기
+            </a>
+            <a href="#features" class="btn-secondary">
+                <i class="fa-solid fa-film"></i> 여행 코스 알아보기
+            </a>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+       [인기 여행지 갤러리 섹션]
+       ========================================================================== -->
+    <section id="destinations">
+        <div class="section-header reveal">
+            <span class="section-badge">Featured Places</span>
+            <h2 class="section-title">놓칠 수 없는 <span class="gradient-text">감성 명소</span></h2>
+            <p class="section-subtitle">여행 크리에이터들이 극찬한 가장 매력적인 여행지 4선을 소개합니다.</p>
+        </div>
+
+        <!-- 여행지 카드 그리드 레이아웃 -->
+        <div class="destinations-grid">
+
+            <!-- 카드 1: 발리 -->
+            <div class="destination-card reveal delay-1">
+                <div class="card-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=700&q=80" alt="발리 우붓 정글 리조트">
+                    <span class="card-tag">자연 & 휴식</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-location"><i class="fa-solid fa-location-dot"></i> 인도네시아 발리</div>
+                    <h3 class="card-title">우붓 에메랄드 정글 힐링</h3>
+                    <p class="card-desc">야자수 숲속에서 즐기는 프라이빗 풀빌라와 새소리로 시작하는 평온한 아침 명상.</p>
+                    <div class="card-footer">
+                        <div class="card-price">최저 <strong>₩ 890,000~</strong></div>
+                        <a href="#contact" class="card-btn" aria-label="상세보기"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카드 2: 스위스 -->
+            <div class="destination-card reveal delay-2">
+                <div class="card-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=700&q=80" alt="스위스 알프스 풍경">
+                    <span class="card-tag">알프스 파노라마</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-location"><i class="fa-solid fa-location-dot"></i> 스위스 그린델발트</div>
+                    <h3 class="card-title">만년설과 푸른 초원의 교향곡</h3>
+                    <p class="card-desc">동화 속 한 장면 같은 산악 열차를 타고 아이거 북벽의 웅장함을 마주하는 시간.</p>
+                    <div class="card-footer">
+                        <div class="card-price">최저 <strong>₩ 2,450,000~</strong></div>
+                        <a href="#contact" class="card-btn" aria-label="상세보기"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카드 3: 산토리니 -->
+            <div class="destination-card reveal delay-3">
+                <div class="card-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=700&q=80" alt="그리스 산토리니">
+                    <span class="card-tag">로맨틱 선셋</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-location"><i class="fa-solid fa-location-dot"></i> 그리스 산토리니</div>
+                    <h3 class="card-title">이아마을의 낭만적인 노을</h3>
+                    <p class="card-desc">새하얀 골목길과 지중해의 깊은 푸른빛 바다, 붉게 물드는 황홀한 일몰을 만끽하세요.</p>
+                    <div class="card-footer">
+                        <div class="card-price">최저 <strong>₩ 1,980,000~</strong></div>
+                        <a href="#contact" class="card-btn" aria-label="상세보기"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카드 4: 교토 -->
+            <div class="destination-card reveal delay-4">
+                <div class="card-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=700&q=80" alt="일본 교토 대나무숲">
+                    <span class="card-tag">고즈넉한 감성</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-location"><i class="fa-solid fa-location-dot"></i> 일본 교토 아라시야마</div>
+                    <h3 class="card-title">사색을 부르는 대나무 숲길</h3>
+                    <p class="card-desc">바람결에 흔들리는 대나무 소리와 천년 고도의 운치 있는 찻집에서 여유를 찾아보세요.</p>
+                    <div class="card-footer">
+                        <div class="card-price">최저 <strong>₩ 520,000~</strong></div>
+                        <a href="#contact" class="card-btn" aria-label="상세보기"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       [여행 서비스 특장점 섹션 (Features)]
+       ========================================================================== -->
+    <section id="features" style="background: rgba(14, 20, 34, 0.5);">
+        <div class="section-header reveal">
+            <span class="section-badge">Why Choose Us</span>
+            <h2 class="section-title">WANDERLUST만의 <span class="gradient-text">특별한 경험</span></h2>
+            <p class="section-subtitle">단순한 관광을 넘어 당신의 마음에 오래도록 남을 가치를 만듭니다.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- 특징 1 -->
+            <div class="feature-card reveal delay-1">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h3 class="feature-title">AI 맞춤 감성 코스</h3>
+                <p class="feature-desc">여행자의 취향과 선호하는 분위기를 정밀 분석하여 나만을 위한 최적의 히든 스팟을 추천해 드립니다.</p>
+            </div>
+
+            <!-- 특징 2 -->
+            <div class="feature-card reveal delay-2">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-clapperboard"></i>
+                </div>
+                <h3 class="feature-title">숏폼 트래블 가이드</h3>
+                <p class="feature-desc">지루한 안내문 대신 15초 감성 숏폼 영상으로 현지의 생생한 분위기와 꿀팁을 빠르게 파악할 수 있습니다.</p>
+            </div>
+
+            <!-- 특징 3 -->
+            <div class="feature-card reveal delay-3">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="feature-title">안심 프라이빗 동행</h3>
+                <p class="feature-desc">여행 출발부터 귀국까지 24시간 실시간 컨시어지 케어로 낯선 여행지에서도 든든하게 보호받습니다.</p>
+            </div>
+
+            <!-- 특징 4 -->
+            <div class="feature-card reveal delay-4">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <h3 class="feature-title">인생 사진 스팟 보장</h3>
+                <p class="feature-desc">전문 포토그래퍼가 엄선한 시간대별 자연광 명소 좌표를 지도와 함께 정확하게 제공합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       [프로모션 & 예약 안내 배너 (CTA Section)]
+       ========================================================================== -->
+    <section id="contact" class="cta-section">
+        <div class="cta-banner reveal">
+            <h2>지금, 당신만의 <span class="gradient-text">여행 이야기</span>를 시작하세요</h2>
+            <p>오늘 예약하시면 얼리버드 전용 15% 할인 혜택과 프리미엄 숏폼 촬영 키트를 무료로 제공해 드립니다.</p>
+            <button class="btn-primary" onclick="alert('감사합니다! 고객 상담팀에서 곧 맞춤 여정을 안내해 드리겠습니다.');">
+                <i class="fa-solid fa-plane-departure"></i> 무료 여행 플랜 상담받기
+            </button>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       [푸터 영역 (Footer)]
+       ========================================================================== -->
+    <footer>
+        <div class="footer-container">
+            <div>
+                <a href="#" class="logo" style="margin-bottom: 12px; display: inline-flex;">
+                    <i class="fa-solid fa-compass"></i> WANDERLUST
+                </a>
+                <p>일상에서 벗어나 가장 나다운 순간을 발견하는 감성 여행 플랫폼</p>
+            </div>
+
+            <!-- SNS 소셜 링크 -->
+            <div class="footer-socials">
+                <a href="#" aria-label="인스타그램"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="유튜브"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" aria-label="틱톡"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" aria-label="카카오톡"><i class="fa-solid fa-comment"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 WANDERLUST Travel Co. All rights reserved. Designed with Antigravity.</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+       [자바스크립트 인터랙션 및 애니메이션 스크립트]
+       - 1. 스크롤 위치에 따른 헤더 디자인 동적 전환
+       - 2. 모바일 반응형 햄버거 메뉴 열기/닫기 토글
+       - 3. Intersection Observer를 이용한 60fps 부드러운 스크롤 애니메이션
+       - 4. 모바일 브라우저 비디오 자동재생 안전 보장 처리
+       ========================================================================== -->
+    <script>
+        // DOM 요소들이 모두 준비되었을 때 안전하게 실행
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* -------------------------------------------------------------
+               [1] 스크롤 시 헤더 블러 효과 적용 로직
+               - 윈도우 스크롤 위치가 50px 이상 내려가면 헤더에 'scrolled' 클래스 추가
+               ------------------------------------------------------------- */
+            const header = document.getElementById('mainHeader');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            /* -------------------------------------------------------------
+               [2] 모바일 반응형 햄버거 메뉴 토글 로직
+               ------------------------------------------------------------- */
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            const navItems = navLinks.querySelectorAll('a');
+
+            // 햄버거 버튼 클릭 시 메뉴 펼침/닫힘
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                
+                // 아이콘 모양 전환 (삼발이 <-> X 닫기 아이콘)
+                const icon = mobileMenuBtn.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                } else {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            // 모바일 메뉴 항목 클릭 시 메뉴 닫기
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                });
+            });
+
+            /* -------------------------------------------------------------
+               [3] 부드러운 스크롤 애니메이션 (Intersection Observer API)
+               - 화면에 '.reveal' 클래스를 가진 요소가 15% 이상 보이면 'active' 추가
+               ------------------------------------------------------------- */
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    // 요소가 뷰포트 영역에 들어왔을 때
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // 한 번 나타난 후에는 감시를 해제하여 성능 최적화
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,          // 브라우저 뷰포트 기준
+                threshold: 0.15,      // 요소의 15%가 노출되면 실행
+                rootMargin: '0px 0px -40px 0px' // 살짝 일찍 감지하도록 여백 조정
+            });
+
+            // 모든 대상 요소들을 관찰자에 등록
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            /* -------------------------------------------------------------
+               [4] 모바일 기기 비디오 자동 재생 안전 처리
+               - 일부 모바일 브라우저의 엄격한 절전 및 정책을 고려하여
+                 muted 상태로 안전하게 자동재생을 트리거합니다.
+               ------------------------------------------------------------- */
+            const shortVideo = document.querySelector('.shortform-video');
+            if (shortVideo) {
+                // 모바일 인라인 재생 및 음소거 보장
+                shortVideo.muted = true;
+                
+                const playPromise = shortVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        // 사용자 상호작용 전 자동재생이 차단된 경우 콘솔 안내
+                        console.log('브라우저 정책에 의해 자동재생 대기 중:', error);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
